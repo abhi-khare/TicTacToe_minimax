@@ -54,32 +54,32 @@ def drawBoard():
 
 
 
-def status():
+def status(gameGrid):
 
     for i in range(0,3):
         if gameGrid[i][0]==1 and gameGrid[i][1]==1 and gameGrid[i][2]==1:
-            print(1)
+            #print(1)
             return 'AI'
         if gameGrid[i][0]==0 and gameGrid[i][1]==0 and gameGrid[i][2]==0:
-            print(2)
+            #print(2)
             return 'HUMAN'
         if gameGrid[0][i]==1 and gameGrid[1][i]==1 and gameGrid[2][i]==1:
-            print(3)
+            #print(3)
             return 'AI'
         if gameGrid[0][i]==0 and gameGrid[1][i]==0 and gameGrid[2][i]==0:
-            print(4)
+            #print(4)
             return 'HUMAN'
-    if gameGrid[i][i]==1 and gameGrid[i][i]==1 and gameGrid[i][i]==1:
-        print(5)
+    if gameGrid[0][0]==1 and gameGrid[1][1]==1 and gameGrid[2][2]==1:
+        #print(5)
         return 'AI'
-    if gameGrid[i][i]==0 and gameGrid[i][i]==0 and gameGrid[i][i]==0:
-        print(6)
+    if gameGrid[0][0]==0 and gameGrid[1][1]==0 and gameGrid[2][2]==0:
+        #print(6)
         return 'HUMAN'
     if (gameGrid[0][2]==1 and gameGrid[1][1]==1 and gameGrid[2][0]==1):
-        print(7)
+        #print(7)
         return 'AI'
     if (gameGrid[0][2]==0 and gameGrid[1][1]==0 and gameGrid[2][0]==0):
-        print(8)
+        #print(8)
         return 'HUMAN'
 
     for i in range(0,3):
@@ -90,8 +90,35 @@ def status():
     return 'TIE'
 
 
-def getBotMove(gameGrid):
-    return (0,0)
+def getBotMove(gameGrid,level):
+    s = status(gameGrid)
+    if s =='AI':
+        return [10,-1,-1]
+    elif s=='HUMAN':
+        return [-10,-1,-1]
+    elif s=='TIE':
+        return [0,-1,-1]
+    else:
+        scoreList = []
+        for i in range(0,3):
+            for j in range(0,3):
+                if gameGrid[i][j] == -1:
+                    gameGrid[i][j] = level
+                    score = getBotMove(gameGrid,1-level)
+                    scoreList.append([score[0],i,j])
+                    gameGrid[i][j] = -1
+        Min,Max,x,y=100,-100,-1,-1
+        for move in scoreList:
+            if level == 0 and move[0]<Min:
+                Min = move[0]
+                x,y = move[1],move[2]
+            elif level==1 and move[0]>Max:
+                Max = move[0]
+                x,y = move[1],move[2]
+        if level==0:
+            return [Min,x,y]
+        else:
+            return [Max,x,y]
 
 # game loop
 drawBoard()
@@ -106,21 +133,21 @@ while not gameExit:
             gameGrid[(userMove-1)//3][(userMove-1)%3]=0
             drawBoard()
             time.sleep(delay)
-            gameState = status()
+            gameState = status(gameGrid)
             if gameState=='HUMAN' or gameState=='TIE':
-                print(gameGrid)
+                print(gameGrid,gameState)
                 gameEndSound.play()
                 time.sleep(delay)
                 gameExit = True
                 break
-            aiMove = getBotMove(gameGrid)
+            aiMove = getBotMove(gameGrid,1)
             aiMoveSound.play(0)
-            gameGrid[aiMove[0]][aiMove[1]]=1
+            gameGrid[aiMove[1]][aiMove[2]]=1
             drawBoard()
             time.sleep(delay)
-            gameState = status()
+            gameState = status(gameGrid)
             if gameState=='AI' or gameState=='TIE':
-                print(gameGrid)
+                print(gameGrid,gameState)
                 gameEndSound.play()
                 time.sleep(delay)
                 gameExit = True
