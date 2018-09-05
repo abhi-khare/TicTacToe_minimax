@@ -3,7 +3,7 @@ from pygame.locals import *
 import numpy as np
 
 # parameters
-Width,Height = 600,600
+Width,Height = 600,600      # height and width of game display
 gameExit = False
 white = (255,255,255)
 black = (0,0,0)
@@ -25,18 +25,20 @@ userMoveSound = pygame.mixer.Sound('Speech_Off.wav')
 aiMoveSound = pygame.mixer.Sound('Speech_On.wav')
 gameEndSound = pygame.mixer.Sound('tada.wav')
 
+# a function to draw zero on screen at location given in argument
 def drawZero(loc):
     y = centers[loc[0]]
     x = centers[loc[1]]
     pygame.draw.circle(gameDisplay,black,(x,y),50,5)
 
+# a function to draw cross on screen at location given in argument
 def drawCross(loc):
     y = centers[loc[0]]
     x = centers[loc[1]]
     pygame.draw.line(gameDisplay,black,(x+50,y+50),(x-50,y-50),5)
     pygame.draw.line(gameDisplay,black,(x+50,y-50),(x-50,y+50),5)
 
-
+# a function to draw the '#' shaped game board and call drawZero and drawCross function.
 def drawBoard():
     gameDisplay.fill(white)
     pygame.draw.rect(gameDisplay,purple,[195,0,10,600])
@@ -46,14 +48,13 @@ def drawBoard():
 
     for i in range(0,3):
         for j in range(0,3):
-            if gameGrid[i][j] == 0:
+            if gameGrid[i][j] == 0:     # whenever '0' is encountered in a gameGrid , drawZero is called
                 drawZero((i,j))
-            elif gameGrid[i][j]==1:
+            elif gameGrid[i][j]==1:     # whenever '1' is encountered in a gameGrid , drawCross is called
                 drawCross((i,j))
-    pygame.display.update()
+    pygame.display.update()             # changes are then updated, kindly refer to pygame to see how it works.
 
-
-
+# a function to tell the status of game : Human win , AI win , Tie , none.
 def status(gameGrid):
 
     for i in range(0,3):
@@ -89,7 +90,7 @@ def status(gameGrid):
 
     return 'TIE'
 
-
+# Core function that implements minimax algorithm to output best possible moves for AI.
 def getBotMove(gameGrid,level):
     s = status(gameGrid)
     if s =='AI':
@@ -129,29 +130,29 @@ while not gameExit:
             gameExit = True
         if event.type == pygame.KEYDOWN:
             userMove = int(chr(event.key))
-            userMoveSound.play(0)
-            gameGrid[(userMove-1)//3][(userMove-1)%3]=0
-            drawBoard()
+            userMoveSound.play(0)                            # play user move sound
+            gameGrid[(userMove-1)//3][(userMove-1)%3]=0      # set user move location to zero.
+            drawBoard()                                      # draw the board.
             time.sleep(delay)
-            gameState = status(gameGrid)
-            if gameState=='HUMAN' or gameState=='TIE':
+            gameState = status(gameGrid)                     # get the status of board after human move.
+            if gameState=='HUMAN' or gameState=='TIE':       # check if human win or there is a tie.
                 print(gameGrid,gameState)
-                gameEndSound.play()
+                gameEndSound.play()                          # if game ends, play game end sound.
                 time.sleep(delay)
-                gameExit = True
+                gameExit = True                              # exit from the game.
                 break
-            aiMove = getBotMove(gameGrid,1)
-            aiMoveSound.play(0)
-            gameGrid[aiMove[1]][aiMove[2]]=1
-            drawBoard()
+            aiMove = getBotMove(gameGrid,1)                  # get AI move.
+            aiMoveSound.play(0)                              # play AI move sound
+            gameGrid[aiMove[1]][aiMove[2]]=1                 # set the AI move location to one   
+            drawBoard()                                      # draw the board.
             time.sleep(delay)
-            gameState = status(gameGrid)
-            if gameState=='AI' or gameState=='TIE':
+            gameState = status(gameGrid)                     # get the status of the board. 
+            if gameState=='AI' or gameState=='TIE':          # check if the AI wins or there is a tie.
                 print(gameGrid,gameState)
                 gameEndSound.play()
                 time.sleep(delay)
                 gameExit = True
                 break
 
-pygame.quit()
+pygame.quit()                                                # end the pygame session.
 quit()
