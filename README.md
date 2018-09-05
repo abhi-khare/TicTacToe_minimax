@@ -6,8 +6,8 @@ A TicTacToe is a finite state game in which two players plays the game sequentia
 
 **Dependencies**
 
-numpy 1.13.3 <br />
-pygame 1.9.3 <br />
+- numpy 1.13.3 <br />
+- pygame 1.9.3 <br />
 
 **Install instructions**
 
